@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
 import { Plus, ArrowRight, Sparkles, FolderKanban } from 'lucide-react';
 import Link from 'next/link';
+import { ResearchProgressPanel } from '@/features/dashboard/components/ResearchProgressPanel';
 
 export default function DashboardHomePage() {
   return (
@@ -84,6 +85,11 @@ export default function DashboardHomePage() {
             </div>
           </CardContent>
         </Card>
+
+        {/* Research Progress Widget */}
+        <div className="md:col-span-3">
+          <ResearchProgressPanel />
+        </div>
 
         {/* Templates Widget */}
         <Card className="md:col-span-3 shadow-sm border-border bg-card">

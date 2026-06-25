@@ -1,7 +1,60 @@
 /* eslint-disable */
-import { ZodSchema, ZodIssue } from 'zod';
+import { z, ZodSchema, ZodIssue } from 'zod';
 import { AIProvider } from './AIProvider';
 import { AIResponse, AIStreamEvent, GenerationOptions, HealthStatus, ValidationResult } from '../types';
+
+function generateMockFromSchema(schema: ZodSchema): unknown {
+  if (schema instanceof z.ZodObject) {
+    const shape = schema.shape;
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(shape)) {
+      result[key] = generateMockFromSchema(value as ZodSchema);
+    }
+    return result;
+  }
+
+  if (schema instanceof z.ZodArray) {
+    return [generateMockFromSchema(schema.element as ZodSchema)];
+  }
+
+  if (schema instanceof z.ZodString) {
+    return 'mock-string';
+  }
+
+  if (schema instanceof z.ZodNumber) {
+    return 42;
+  }
+
+  if (schema instanceof z.ZodBoolean) {
+    return true;
+  }
+
+  if (schema instanceof z.ZodEnum) {
+    return schema._def.values[0];
+  }
+
+  if (schema instanceof z.ZodOptional) {
+    return generateMockFromSchema(schema.unwrap() as ZodSchema);
+  }
+
+  if (schema instanceof z.ZodNullable) {
+    return generateMockFromSchema(schema.unwrap() as ZodSchema);
+  }
+
+  if (schema instanceof z.ZodDefault) {
+    return schema._def.defaultValue();
+  }
+
+  if (schema instanceof z.ZodUnion) {
+    return generateMockFromSchema(schema._def.options[0] as ZodSchema);
+  }
+
+  if (schema instanceof z.ZodEffects) {
+    return generateMockFromSchema(schema._def.schema as ZodSchema);
+  }
+
+  return null;
+}
 
 export class MockProvider implements AIProvider {
   private simulateLatency: boolean;
@@ -26,11 +79,10 @@ export class MockProvider implements AIProvider {
     }
 
     let mockText = 'This is a mock generation response from MockProvider.';
-    
-    // If a schema is provided, return a valid JSON string that matches its shape loosely.
-    // Real implementation would mock realistic JSON, but for generic tests this is fine.
+
     if (options?.schema) {
-      mockText = JSON.stringify({ mock: 'data', success: true });
+      const mockData = generateMockFromSchema(options.schema);
+      mockText = JSON.stringify(mockData);
     }
 
     return {
@@ -79,14 +131,14 @@ export class MockProvider implements AIProvider {
     try {
       const parsed = JSON.parse(response);
       const validated = schema.safeParse(parsed);
-      
+
       if (validated.success) {
         return { isValid: true, errors: [], parsedData: validated.data };
       }
-      
-      return { 
-        isValid: false, 
-        errors: validated.error.issues.map((issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`) 
+
+      return {
+        isValid: false,
+        errors: validated.error.issues.map((issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`)
       };
     } catch (_e) {
       return { isValid: false, errors: ['Failed to parse response as JSON.'] };
@@ -94,7 +146,6 @@ export class MockProvider implements AIProvider {
   }
 
   async countTokens(text: string): Promise<number> {
-    // Mock approximation: ~4 characters per token
     return Math.ceil(text.length / 4);
   }
 
