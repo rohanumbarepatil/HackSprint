@@ -47,10 +47,11 @@ export class GeminiProvider implements AIProvider {
   async *stream(prompt: string, options?: GenerationOptions): AsyncGenerator<AIStreamEvent> {
     const model = options?.model || this.defaultModel;
     yield { type: 'STARTED', timestamp: Date.now() };
-    
+
     try {
+      yield { type: 'RESEARCHING', timestamp: Date.now() };
       yield { type: 'THINKING', timestamp: Date.now() };
-      
+
       const stream = await this.ai.models.generateContentStream({
         model,
         contents: prompt,
@@ -61,14 +62,23 @@ export class GeminiProvider implements AIProvider {
         }
       });
 
+      yield { type: 'GENERATING', timestamp: Date.now() };
+
+      let fullText = '';
       for await (const chunk of stream) {
-        yield { 
-          type: 'GENERATING', 
-          payload: chunk.text, 
-          timestamp: Date.now() 
+        if (chunk.text) fullText += chunk.text;
+        yield {
+          type: 'GENERATING',
+          payload: chunk.text,
+          timestamp: Date.now()
         };
       }
 
+      if (options?.schema) {
+        yield { type: 'VALIDATING', timestamp: Date.now() };
+      }
+
+      yield { type: 'SAVING', timestamp: Date.now() };
       yield { type: 'COMPLETED', timestamp: Date.now() };
     } catch (error: unknown) {
       yield { type: 'FAILED', payload: (error as Error).message, timestamp: Date.now() };

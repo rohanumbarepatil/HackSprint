@@ -43,10 +43,13 @@ export class MockProvider implements AIProvider {
 
   async *stream(prompt: string, options?: GenerationOptions): AsyncGenerator<AIStreamEvent> {
     yield { type: 'STARTED', timestamp: Date.now() };
-    await this.delay(300);
-    
+    await this.delay(200);
+
+    yield { type: 'RESEARCHING', timestamp: Date.now() };
+    await this.delay(200);
+
     yield { type: 'THINKING', timestamp: Date.now() };
-    await this.delay(300);
+    await this.delay(200);
 
     if (this.shouldFail) {
       yield { type: 'FAILED', payload: 'Mock failure during stream', timestamp: Date.now() };
@@ -54,13 +57,21 @@ export class MockProvider implements AIProvider {
     }
 
     yield { type: 'GENERATING', payload: 'Mock', timestamp: Date.now() };
-    await this.delay(300);
-    
+    await this.delay(200);
+
     yield { type: 'GENERATING', payload: ' stream', timestamp: Date.now() };
-    await this.delay(300);
+    await this.delay(200);
 
     yield { type: 'GENERATING', payload: ' response.', timestamp: Date.now() };
-    
+
+    if (options?.schema) {
+      yield { type: 'VALIDATING', timestamp: Date.now() };
+      await this.delay(100);
+    }
+
+    yield { type: 'SAVING', timestamp: Date.now() };
+    await this.delay(100);
+
     yield { type: 'COMPLETED', timestamp: Date.now() };
   }
 

@@ -109,6 +109,24 @@ export const ImplementationSchema = z.object({
   })),
 });
 
+// 16. Backend (combined API + DevOps)
+export const BackendSchema = z.object({
+  restEndpoints: z.array(z.object({ method: z.string(), path: z.string(), description: z.string() })),
+  graphqlMutations: z.array(z.string()).optional(),
+  ciCdPipeline: z.array(z.string()),
+  hostingProvider: z.string(),
+  scalingStrategy: z.string(),
+});
+
+// 17. Validation & Quality
+export const ValidationSchema = z.object({
+  overallScore: z.number().min(1).max(10),
+  consistencyIssues: z.array(z.string()),
+  completenessIssues: z.array(z.string()),
+  recommendations: z.array(z.string()),
+  approved: z.boolean(),
+});
+
 export const ModuleSchemas: Record<string, z.ZodSchema> = {
   'problem': ProblemAnalyzerSchema,
   'research': ResearchSchema,
@@ -120,9 +138,11 @@ export const ModuleSchemas: Record<string, z.ZodSchema> = {
   'api': APISchema,
   'ui-ux': UISchema,
   'devops': DevOpsSchema,
+  'backend': BackendSchema,
   'security': SecuritySchema,
   'qa': QASchema,
   'business': BusinessModelSchema,
   'pitch': PitchDeckSchema,
   'implementation': ImplementationSchema,
+  'validation': ValidationSchema,
 };
