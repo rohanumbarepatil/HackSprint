@@ -13,4 +13,8 @@ export {
   type ValidationReportDoc,
   type TokenUsageDoc,
   type AuditLogDoc,
+  type ResearchDoc,
+  type ResearchHistoryDoc,
+  type ResearchVersionDoc,
+  type ResearchAnalyticsDoc,
 } from './collections';

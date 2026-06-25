@@ -1,0 +1,1 @@
+export { ResearchRepository } from './ResearchRepository';

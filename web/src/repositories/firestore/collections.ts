@@ -10,6 +10,10 @@ export const COLLECTIONS = {
   VALIDATION_REPORTS: 'validationReports' as const,
   TOKEN_USAGE: 'tokenUsage' as const,
   AUDIT_LOGS: 'auditLogs' as const,
+  RESEARCH: 'research' as const,
+  RESEARCH_HISTORY: 'researchHistory' as const,
+  RESEARCH_VERSIONS: 'researchVersions' as const,
+  RESEARCH_ANALYTICS: 'researchAnalytics' as const,
 } as const;
 
 export type CollectionName = (typeof COLLECTIONS)[keyof typeof COLLECTIONS];
@@ -172,4 +176,57 @@ export interface AuditLogDoc {
   ipAddress?: string;
   userAgent?: string;
   timestamp: number;
+}
+
+export interface ResearchDoc {
+  id: string;
+  projectId: string;
+  category: string;
+  content: Record<string, unknown>;
+  summary: string;
+  source: string;
+  version: number;
+  createdBy: string;
+  createdAt: number;
+  updatedAt: number;
+  tags: string[];
+  metadata?: Record<string, unknown>;
+}
+
+export interface ResearchHistoryDoc {
+  id: string;
+  researchId: string;
+  projectId: string;
+  category: string;
+  action: string;
+  previousContent?: Record<string, unknown>;
+  newContent?: Record<string, unknown>;
+  version: number;
+  performedBy: string;
+  timestamp: number;
+  reason?: string;
+}
+
+export interface ResearchVersionDoc {
+  id: string;
+  researchId: string;
+  projectId: string;
+  category: string;
+  versionNumber: number;
+  content: Record<string, unknown>;
+  summary: string;
+  changelog: string;
+  createdBy: string;
+  createdAt: number;
+  status: string;
+}
+
+export interface ResearchAnalyticsDoc {
+  id: string;
+  projectId: string;
+  category: string;
+  action: string;
+  timestamp: number;
+  userId?: string;
+  metadata?: Record<string, unknown>;
 }
