@@ -8,7 +8,7 @@ export class ProviderFactory {
    * Instantiates and returns the requested AIProvider.
    * Ensures that the Orchestrator never instantiates providers directly.
    */
-  static create(providerName: AIProviderName, options?: Record<string, any>): AIProvider {
+  static create(providerName: AIProviderName, options?: Record<string, unknown>): AIProvider {
     switch (providerName) {
       case 'gemini':
         const apiKey = process.env.NEXT_PUBLIC_FIREBASE_API_KEY || process.env.GEMINI_API_KEY;

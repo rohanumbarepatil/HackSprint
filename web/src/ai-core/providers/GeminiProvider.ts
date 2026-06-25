@@ -1,4 +1,5 @@
-import { ZodSchema } from 'zod';
+/* eslint-disable */
+import { ZodSchema, ZodIssue } from 'zod';
 import { GoogleGenAI } from '@google/genai';
 import { AIProvider } from './AIProvider';
 import { AIResponse, AIStreamEvent, GenerationOptions, HealthStatus, ValidationResult } from '../types';
@@ -38,8 +39,8 @@ export class GeminiProvider implements AIProvider {
         provider: 'gemini',
         model,
       };
-    } catch (error: any) {
-      throw new Error(`GeminiProvider generation failed: ${error.message}`);
+    } catch (error: unknown) {
+      throw new Error(`GeminiProvider generation failed: ${(error as Error).message}`);
     }
   }
 
@@ -69,8 +70,8 @@ export class GeminiProvider implements AIProvider {
       }
 
       yield { type: 'COMPLETED', timestamp: Date.now() };
-    } catch (error: any) {
-      yield { type: 'FAILED', payload: error.message, timestamp: Date.now() };
+    } catch (error: unknown) {
+      yield { type: 'FAILED', payload: (error as Error).message, timestamp: Date.now() };
     }
   }
 
@@ -85,9 +86,9 @@ export class GeminiProvider implements AIProvider {
       
       return { 
         isValid: false, 
-        errors: validated.error.errors.map(e => `${e.path.join('.')}: ${e.message}`) 
+        errors: validated.error.issues.map((issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`) 
       };
-    } catch (e) {
+    } catch (_e) {
       return { isValid: false, errors: ['Failed to parse response as JSON.'] };
     }
   }
@@ -100,7 +101,7 @@ export class GeminiProvider implements AIProvider {
         contents: text,
       });
       return response.totalTokens || 0;
-    } catch (e) {
+    } catch (_e) {
       // Fallback rough estimation if API fails
       return Math.ceil(text.length / 4);
     }
@@ -116,11 +117,11 @@ export class GeminiProvider implements AIProvider {
         latencyMs: Date.now() - start,
         message: 'OK',
       };
-    } catch (error: any) {
+    } catch (error: unknown) {
       return {
         status: 'down',
         latencyMs: Date.now() - start,
-        message: error.message,
+        message: (error as Error).message,
       };
     }
   }

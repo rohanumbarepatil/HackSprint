@@ -43,7 +43,7 @@ export interface TokenStats {
 export interface ValidationResult {
   isValid: boolean;
   errors: string[];
-  parsedData?: any;
+  parsedData?: unknown;
 }
 
 export interface HealthStatus {
@@ -56,7 +56,7 @@ export interface HealthStatus {
 export interface QueueJob {
   id: string;
   priority: 'low' | 'medium' | 'high' | 'critical';
-  payload: any;
+  payload: unknown;
   status: 'queued' | 'processing' | 'completed' | 'failed';
   attempts: number;
   maxRetries: number;

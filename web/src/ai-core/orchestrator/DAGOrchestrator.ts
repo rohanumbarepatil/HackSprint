@@ -85,7 +85,7 @@ export class DAGOrchestrator {
 
           results.set(node.id, finalOutput);
           completedNodeIds.add(node.id);
-        } catch (e: any) {
+        } catch (e: unknown) {
           console.error(`Node ${node.id} failed fatally:`, e);
           hasError = true; // Stop the pipeline
         } finally {

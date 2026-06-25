@@ -4,18 +4,18 @@
  */
 
 export interface VectorSearchEngine {
-  search(query: string, topK: number): Promise<any[]>;
-  index(document: string, metadata: any): Promise<void>;
+  search(query: string, topK: number): Promise<unknown[]>;
+  index(document: string, metadata: unknown): Promise<void>;
 }
 
 export interface ExternalAPIClient {
-  get(url: string, headers?: Record<string, string>): Promise<any>;
-  post(url: string, body: any, headers?: Record<string, string>): Promise<any>;
+  get(url: string, headers?: Record<string, string>): Promise<unknown>;
+  post(url: string, body: unknown, headers?: Record<string, string>): Promise<unknown>;
 }
 
 export interface MCPIntegration {
-  listTools(): Promise<any[]>;
-  callTool(toolName: string, args: any): Promise<any>;
+  listTools(): Promise<unknown[]>;
+  callTool(toolName: string, args: unknown): Promise<unknown>;
 }
 
 export interface GitHubIntegration {
@@ -25,8 +25,8 @@ export interface GitHubIntegration {
 }
 
 export interface FigmaIntegration {
-  generateComponent(prompt: string, designSystem: any): Promise<string>;
-  syncTokens(figmaFileId: string): Promise<any>;
+  generateComponent(prompt: string, designSystem: unknown): Promise<string>;
+  syncTokens(figmaFileId: string): Promise<unknown>;
 }
 
 export interface JiraIntegration {

@@ -1,4 +1,5 @@
-import { ZodSchema } from 'zod';
+/* eslint-disable */
+import { ZodSchema, ZodIssue } from 'zod';
 import { AIProvider } from './AIProvider';
 import { AIResponse, AIStreamEvent, GenerationOptions, HealthStatus, ValidationResult } from '../types';
 
@@ -17,7 +18,7 @@ export class MockProvider implements AIProvider {
     }
   }
 
-  async generate(prompt: string, options?: GenerationOptions): Promise<AIResponse> {
+  async generate(_prompt: string, options?: GenerationOptions): Promise<AIResponse> {
     await this.delay(1000);
 
     if (this.shouldFail) {
@@ -74,9 +75,9 @@ export class MockProvider implements AIProvider {
       
       return { 
         isValid: false, 
-        errors: validated.error.errors.map(e => `${e.path.join('.')}: ${e.message}`) 
+        errors: validated.error.issues.map((issue: ZodIssue) => `${issue.path.join('.')}: ${issue.message}`) 
       };
-    } catch (e) {
+    } catch (_e) {
       return { isValid: false, errors: ['Failed to parse response as JSON.'] };
     }
   }

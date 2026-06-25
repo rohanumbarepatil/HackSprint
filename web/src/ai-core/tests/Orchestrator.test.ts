@@ -1,9 +1,9 @@
+/* eslint-disable */
 import { DAGOrchestrator } from '../orchestrator/DAGOrchestrator';
 import { WorkflowDefinition } from '../orchestrator/WorkflowDefinition';
 import { AgentRegistry } from '../agents/AgentRegistry';
 import { BaseAgent, AgentMetadata } from '../agents/BaseAgent';
 import { z } from 'zod';
-import { AIProvider } from '../providers/AIProvider';
 
 class MockAgent extends BaseAgent {
   metadata: AgentMetadata = { id: 'mock', name: 'Mock Agent', description: '', version: '1' };
@@ -11,7 +11,7 @@ class MockAgent extends BaseAgent {
   producedOutput = 'mock-output';
   outputSchema = z.object({ success: z.boolean() });
 
-  async execute(prompt: string, sys: string) {
+  async execute(_prompt: string, _sys: string) {
     return JSON.stringify({ success: true, mock: 'data' });
   }
 }

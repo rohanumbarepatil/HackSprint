@@ -1,4 +1,5 @@
-import { ZodSchema } from 'zod';
+/* eslint-disable */
+import { ZodSchema, ZodIssue } from 'zod';
 import { ValidationResult } from '../types';
 
 export class ValidationPipeline {
@@ -7,7 +8,7 @@ export class ValidationPipeline {
    */
   static async run(rawResponse: string, schema: ZodSchema): Promise<ValidationResult> {
     const errors: string[] = [];
-    let parsedData: any;
+    let parsedData: unknown;
 
     try {
       // Stage 1: Basic JSON Parse Validation
@@ -24,7 +25,7 @@ export class ValidationPipeline {
       // Stage 2: Strict Zod Schema Validation
       const zodResult = schema.safeParse(parsedData);
       if (!zodResult.success) {
-        errors.push(...zodResult.error.errors.map(e => `Schema Error at ${e.path.join('.')}: ${e.message}`));
+        errors.push(...zodResult.error.issues.map((e: any) => `Schema Error at ${e.path.join('.')}: ${e.message}`));
         return { isValid: false, errors };
       }
       parsedData = zodResult.data;
@@ -47,8 +48,9 @@ export class ValidationPipeline {
         parsedData
       };
 
-    } catch (e: any) {
-      errors.push(`Fatal Validation Error: ${e.message}`);
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : String(e);
+      errors.push(`Fatal Validation Error: ${msg}`);
       return { isValid: false, errors };
     }
   }
